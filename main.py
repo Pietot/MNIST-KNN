@@ -32,6 +32,32 @@ class Field:
             ]
         raise TypeError("Index must be an integer or a slice")
 
+    def generate_field(self) -> None:
+        """Generate the field of points from the images and labels."""
+        for image, label in self:
+            self.get_coordinates(image)
+
+    def get_coordinates(self, image: npt.NDArray[np.float64]) -> None:
+        """Gets the 9 coordinates for all images. 
+
+        Args:
+            image (npt.NDArray[np.float64]): The image
+        """
+        print(self.raytracing_from_up(image))
+
+    def raytracing_from_up(self, image: npt.NDArray[np.float64]) -> np.float64:
+        """Parse each column of the image and throw a ray from top to bottom
+        to see if it reaches the bottom.
+    
+        Args:
+            image (npt.NDArray[np.float64]): The image to parse.
+    
+        Returns:
+            np.float64: The percentage of rays that reach the bottom.
+        """
+        reaches = np.sum(np.all(image == 0, axis=0))
+        return np.float64(reaches / image.shape[1])
+
     def add(self, coordinates: npt.NDArray[np.float64], value: int) -> None:
         """Add a point into the 9 dimension field.
 
@@ -72,4 +98,4 @@ def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
 if __name__ == "__main__":
     np.set_printoptions(linewidth=200)
     field = Field()
-    print(field[2])
+    field.generate_field()
