@@ -1,4 +1,4 @@
-"""Pylight is a program capable of recognizing handwritten numbers using rays of light and the K-Nearest-Neighbors algorithm."""
+"""Pylight recognize handwritten numbers using rays of light and the KNN algorithm."""
 
 import numpy as np
 
@@ -6,6 +6,12 @@ from numpy import typing as npt
 
 
 def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
+    """Load the training MNIST dataset.
+
+    Returns:
+        tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
+            The images and the labels.
+    """
     with open(r"assets\train-images-idx3-ubyte", "rb") as f:
         f.read(4)  # Ignore magic field
         num_images = int.from_bytes(f.read(4), "big")
@@ -24,5 +30,3 @@ def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
         labels = np.frombuffer(label_data, dtype=np.uint8)
 
     return images, labels
-
-images, labels = load_train_mnist()
