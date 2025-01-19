@@ -10,9 +10,10 @@ from numpy import typing as npt
 class Field:
     """Class representing a field of points with associated images and labels."""
 
-    def __init__(self) -> None:
+    def __init__(self, k_nearest: int = 5) -> None:
         self.points: list[tuple[npt.NDArray[np.float64], int]] = []
         self.images, self.labels = load_train_mnist()
+        self.k_nearest = k_nearest
 
     def __iter__(self) -> Generator[tuple[npt.NDArray[np.float64], int], None, None]:
         for image, label in zip(self.images, self.labels):
