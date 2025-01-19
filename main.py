@@ -36,8 +36,9 @@ class Field:
         """Generate the field of points from the images and labels."""
         for image, label in self:
             coordinates = self.get_coordinates(image)
+            self.add(coordinates, label)
 
-    def get_coordinates(self, image: npt.NDArray[np.float64]) -> None:
+    def get_coordinates(self, image: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """Gets the 9 coordinates for all images.
 
         Args:
@@ -49,7 +50,19 @@ class Field:
         luminosity_from_bottom = self.light_from(image, "bottom")
         luminosity_from_left = self.light_from(image, "left")
         luminosity_from_right = self.light_from(image, "right")
-        size_number = self.size_number(image)
+        size_number = self.get_size_number(image)
+        coordinates = np.array(
+            [
+                ray_vertical,
+                ray_horizontal,
+                luminosity_from_top,
+                luminosity_from_bottom,
+                luminosity_from_left,
+                luminosity_from_right,
+                size_number,
+            ]
+        )
+        return coordinates
 
     def raytracing_vertical(self, image: npt.NDArray[np.float64]) -> np.float64:
         """Parse each column of the image and see if all value are 0.
@@ -95,7 +108,7 @@ class Field:
 
         return np.float64(pixels_crossed / zero_pixels)
 
-    def size_number(self, image: npt.NDArray[np.float64]) -> np.float64:
+    def get_size_number(self, image: npt.NDArray[np.float64]) -> np.float64:
         """Get the number of pixels that belong to the number.
 
         Args:
@@ -147,3 +160,5 @@ if __name__ == "__main__":
     np.set_printoptions(linewidth=200)
     field = Field()
     field.generate_field()
+    print(field)
+    print(field.points)
