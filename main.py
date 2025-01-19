@@ -35,27 +35,41 @@ class Field:
     def generate_field(self) -> None:
         """Generate the field of points from the images and labels."""
         for image, label in self:
-            self.get_coordinates(image)
+            coordinates = self.get_coordinates(image)
+            self.add(coordinates, label)
 
     def get_coordinates(self, image: npt.NDArray[np.float64]) -> None:
-        """Gets the 9 coordinates for all images. 
+        """Gets the 9 coordinates for all images.
 
         Args:
             image (npt.NDArray[np.float64]): The image
         """
-        print(self.raytracing_from_up(image))
+        ray_vertical = self.raytracing_vertical(image)
+        ray_horizontal = self.raytracing_horizontal(image)
 
-    def raytracing_from_up(self, image: npt.NDArray[np.float64]) -> np.float64:
-        """Parse each column of the image and throw a ray from top to bottom
-        to see if it reaches the bottom.
-    
+    def raytracing_vertical(self, image: npt.NDArray[np.float64]) -> np.float64:
+        """Parse each column of the image and see if all value are 0 ()
+
         Args:
             image (npt.NDArray[np.float64]): The image to parse.
-    
+
         Returns:
             np.float64: The percentage of rays that reach the bottom.
         """
         reaches = np.sum(np.all(image == 0, axis=0))
+        return np.float64(reaches / image.shape[1])
+
+    def raytracing_horizontal(self, image: npt.NDArray[np.float64]) -> np.float64:
+        """Parse each line of the image and throw a ray from left to right
+        to see if it reaches the bottom.
+
+        Args:
+            image (npt.NDArray[np.float64]): The image to parse.
+
+        Returns:
+            np.float64: The percentage of rays that reach the bottom.
+        """
+        reaches = np.sum(np.all(image == 0, axis=1))
         return np.float64(reaches / image.shape[1])
 
     def add(self, coordinates: npt.NDArray[np.float64], value: int) -> None:
@@ -99,3 +113,5 @@ if __name__ == "__main__":
     np.set_printoptions(linewidth=200)
     field = Field()
     field.generate_field()
+    print(field.images[0])
+    print(field.points[0])
