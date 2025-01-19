@@ -10,7 +10,7 @@ from numpy import typing as npt
 class Field:
     """Class representing a field of points with associated images and labels."""
 
-    def __init__(self, k_nearest: int = 5) -> None:
+    def __init__(self, k_nearest: int = 10) -> None:
         self.points: list[tuple[npt.NDArray[np.float64], int]] = []
         self.images, self.labels = load_train_mnist()
         self.k_nearest = k_nearest
@@ -129,6 +129,26 @@ class Field:
         """
         self.points.append((coordinates, value))
 
+    def predict(self, image: npt.NDArray[np.float64]) -> int:
+        """Predict the value of the image using the KNN algorithm.
+
+        Args:
+            image (npt.NDArray[np.float64]): The image to predict.
+
+        Returns:
+            int: The predicted value.
+        """
+        np.set_printoptions(linewidth=200)
+        coordinates = self.get_coordinates(image)
+        points_array = np.array([point[0] for point in self.points])
+        labels_array = np.array([point[1] for point in self.points])
+
+        distances = np.linalg.norm(points_array - coordinates, axis=1)
+        nearest = np.argsort(distances)[: self.k_nearest + 1]
+        nearest_values = labels_array[nearest]
+
+        return int(np.bincount(nearest_values).argmax())
+
 
 def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
     """Load the training MNIST dataset.
@@ -147,6 +167,33 @@ def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
         images = np.frombuffer(image_data, dtype=np.uint8).reshape((num_images, num_rows, num_cols))
 
     with open(r"assets\train-labels-idx1-ubyte", "rb") as f:
+        f.read(4)  # Ignore magic field
+        num_labels = int.from_bytes(f.read(4), "big")
+        assert num_labels == num_images, "Number of labels does not match number of images"
+
+        label_data = f.read(num_labels)
+        labels = np.frombuffer(label_data, dtype=np.uint8)
+
+    return images, labels
+
+
+def load_test_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
+    """Load the test MNIST dataset.
+
+    Returns:
+        tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
+            The images and the labels.
+    """
+    with open(r"assets\t10k-images-idx3-ubyte", "rb") as f:
+        f.read(4)  # Ignore magic field
+        num_images = int.from_bytes(f.read(4), "big")
+        num_rows = int.from_bytes(f.read(4), "big")
+        num_cols = int.from_bytes(f.read(4), "big")
+
+        image_data = f.read(num_images * num_rows * num_cols)
+        images = np.frombuffer(image_data, dtype=np.uint8).reshape((num_images, num_rows, num_cols))
+
+    with open(r"assets\t10k-labels-idx1-ubyte", "rb") as f:
         f.read(4)  # Ignore magic field
         num_labels = int.from_bytes(f.read(4), "big")
         assert num_labels == num_images, "Number of labels does not match number of images"
