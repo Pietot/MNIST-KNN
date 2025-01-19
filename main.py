@@ -2,25 +2,27 @@
 
 from typing import Any, Generator, Union
 
+import pickle
 import numpy as np
+from scipy.spatial import cKDTree  # type: ignore
 
 from numpy import typing as npt
 
 
-class Field:
-    """Class representing a field of points with associated images and labels."""
+class KDT:
+    """Class representing a k-dimensional tree."""
 
-    def __init__(self, k_nearest: int = 10) -> None:
-        self.points: list[tuple[npt.NDArray[np.float64], int]] = []
+    def __init__(self, k_nearest: int = 5) -> None:
+        self.coordinates: list[npt.NDArray[np.float64]] = []
         self.images, self.labels = load_train_mnist()
         self.k_nearest = k_nearest
+        self.build_kdtree()
 
-    def __iter__(self) -> Generator[tuple[npt.NDArray[np.float64], int], None, None]:
-        for image, label in zip(self.images, self.labels):
-            yield image, label
+    def __iter__(self) -> Generator[npt.NDArray[np.float64], None, None]:
+        yield from self.images
 
     def __str__(self) -> str:
-        return f"Field with {len(self.points)} points"
+        return f"KDT with {len(self.coordinates)} points"
 
     def __getitem__(
         self, index: Union[int, slice, Any]
@@ -33,11 +35,14 @@ class Field:
             ]
         raise TypeError("Index must be an integer or a slice")
 
-    def generate_field(self) -> None:
-        """Generate the field of points from the images and labels."""
-        for image, label in self:
+    def build_kdtree(self) -> None:
+        """Build a KDTree from the coordinates calculated for each image."""
+        for image in self:
             coordinates = self.get_coordinates(image)
-            self.add(coordinates, label)
+            self.add(coordinates)
+
+        points = np.array(self.coordinates)
+        self.kdtree = cKDTree(points)
 
     def get_coordinates(self, image: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """Gets the 9 coordinates for all images.
@@ -120,14 +125,13 @@ class Field:
         """
         return np.float64(np.sum(image > 0) / image.size)
 
-    def add(self, coordinates: npt.NDArray[np.float64], value: int) -> None:
-        """Add a point into the 9 dimension field.
+    def add(self, coordinates: npt.NDArray[np.float64]) -> None:
+        """Add a point into the KDT.
 
         Args:
             coordinates (npt.NDArray[np.float64]): The 9 dimensions coordinates of the point.
-            value (int): The value of the point (0-9).
         """
-        self.points.append((coordinates, value))
+        self.coordinates.append(coordinates)
 
     def predict(self, image: npt.NDArray[np.float64]) -> int:
         """Predict the value of the image using the KNN algorithm.
@@ -138,14 +142,9 @@ class Field:
         Returns:
             int: The predicted value.
         """
-        np.set_printoptions(linewidth=200)
         coordinates = self.get_coordinates(image)
-        points_array = np.array([point[0] for point in self.points])
-        labels_array = np.array([point[1] for point in self.points])
-
-        distances = np.linalg.norm(points_array - coordinates, axis=1)
-        nearest = np.argsort(distances)[: self.k_nearest + 1]
-        nearest_values = labels_array[nearest]
+        _, indices = self.kdtree.query(coordinates, k=self.k_nearest)
+        nearest_values = self.labels[indices]
 
         return int(np.bincount(nearest_values).argmax())
 
@@ -205,8 +204,12 @@ def load_test_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
 
 
 if __name__ == "__main__":
-    np.set_printoptions(linewidth=200)
-    field = Field()
-    field.generate_field()
-    print(field)
-    print(field.points)
+    with open(r"assets\class\kdt.pkl", "rb") as file:
+        kdt = pickle.load(file)
+    test_images, test_labels = load_test_mnist()
+    correct: int = 0
+    for img, lab in zip(test_images, test_labels):
+        prediction = kdt.predict(img)
+        if prediction == lab:
+            correct += 1
+    print(f"Accuracy: {correct / len(test_images) * 100:.2f}%")
