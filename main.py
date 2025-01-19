@@ -41,7 +41,7 @@ class Field:
         """Gets the 9 coordinates for all images.
 
         Args:
-            image (npt.NDArray[np.float64]): The image
+            image (npt.NDArray[np.float64]): The image.
         """
         ray_vertical = self.raytracing_vertical(image)
         ray_horizontal = self.raytracing_horizontal(image)
@@ -52,7 +52,7 @@ class Field:
         size_number = self.size_number(image)
 
     def raytracing_vertical(self, image: npt.NDArray[np.float64]) -> np.float64:
-        """Parse each column of the image and see if all value are 0 ()
+        """Parse each column of the image and see if all value are 0.
 
         Args:
             image (npt.NDArray[np.float64]): The image to parse.
@@ -64,8 +64,7 @@ class Field:
         return np.float64(reaches / image.shape[1])
 
     def raytracing_horizontal(self, image: npt.NDArray[np.float64]) -> np.float64:
-        """Parse each line of the image and throw a ray from left to right
-        to see if it reaches the bottom.
+        """Parse each line of the image and see if all values are 0.
 
         Args:
             image (npt.NDArray[np.float64]): The image to parse.
@@ -112,7 +111,7 @@ class Field:
 
         Args:
             coordinates (npt.NDArray[np.float64]): The 9 dimensions coordinates of the point.
-            value (int): The value of the point (0-9)
+            value (int): The value of the point (0-9).
         """
         self.points.append((coordinates, value))
 
