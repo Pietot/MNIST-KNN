@@ -49,6 +49,7 @@ class Field:
         luminosity_from_bottom = self.light_from(image, "bottom")
         luminosity_from_left = self.light_from(image, "left")
         luminosity_from_right = self.light_from(image, "right")
+        size_number = self.size_number(image)
 
     def raytracing_vertical(self, image: npt.NDArray[np.float64]) -> np.float64:
         """Parse each column of the image and see if all value are 0 ()
@@ -94,6 +95,17 @@ class Field:
         pixels_crossed = np.sum((image == 0) & ~hit_number)
 
         return np.float64(pixels_crossed / zero_pixels)
+
+    def size_number(self, image: npt.NDArray[np.float64]) -> np.float64:
+        """Get the number of pixels that belong to the number.
+
+        Args:
+            image (npt.NDArray[np.float64]): The image.
+
+        Returns:
+            np.float64: The percentage of pixels that belong to the number.
+        """
+        return np.float64(np.sum(image > 0) / image.size)
 
     def add(self, coordinates: npt.NDArray[np.float64], value: int) -> None:
         """Add a point into the 9 dimension field.
