@@ -36,7 +36,6 @@ class Field:
         """Generate the field of points from the images and labels."""
         for image, label in self:
             coordinates = self.get_coordinates(image)
-            self.add(coordinates, label)
 
     def get_coordinates(self, image: npt.NDArray[np.float64]) -> None:
         """Gets the 9 coordinates for all images.
@@ -46,6 +45,7 @@ class Field:
         """
         ray_vertical = self.raytracing_vertical(image)
         ray_horizontal = self.raytracing_horizontal(image)
+        luminosity_from_top, shadow_from_bottom = self.light_from_top(image)
 
     def raytracing_vertical(self, image: npt.NDArray[np.float64]) -> np.float64:
         """Parse each column of the image and see if all value are 0 ()
@@ -71,6 +71,27 @@ class Field:
         """
         reaches = np.sum(np.all(image == 0, axis=1))
         return np.float64(reaches / image.shape[1])
+
+    def light_from_top(self, image: npt.NDArray[np.float64]) -> tuple[np.float64, np.float64]:
+        """Parse each column of the image, throw a ray from the top to the bottom
+        until it reaches a pixel.
+
+        Args:
+            image (npt.NDArray[np.float64]): The image to parse.
+
+        Returns:
+           tuple[np.float64, np.float64]: The percentage of pixels crossed by the ray from the top
+           and the percentage of pixels hidden from the light by the number.
+        """
+        zero_pixels = np.sum(image == 0)
+        hit_number = np.cumsum(image != 0, axis=0) > 0
+        pixels_crossed = np.sum((image == 0) & ~hit_number)
+        pixels_hidden = np.sum((image == 0) & hit_number)
+
+        return (
+            np.float64(pixels_crossed / zero_pixels),
+            np.float64(pixels_hidden / zero_pixels),
+        )
 
     def add(self, coordinates: npt.NDArray[np.float64], value: int) -> None:
         """Add a point into the 9 dimension field.
@@ -112,6 +133,5 @@ def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
 if __name__ == "__main__":
     np.set_printoptions(linewidth=200)
     field = Field()
-    field.generate_field()
     print(field.images[0])
-    print(field.points[0])
+    field.generate_field()
