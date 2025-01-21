@@ -52,19 +52,19 @@ class KDT:
         """
         ray_vertical = self.raytracing_vertical(image)
         ray_horizontal = self.raytracing_horizontal(image)
-        luminosity_from_top = self.light_from(image, "top")
-        luminosity_from_bottom = self.light_from(image, "bottom")
-        luminosity_from_left = self.light_from(image, "left")
-        luminosity_from_right = self.light_from(image, "right")
+        light_from_top = self.light_from(image, "top")
+        light_from_bottom = self.light_from(image, "bottom")
+        light_from_left = self.light_from(image, "left")
+        light_from_right = self.light_from(image, "right")
         size_number = self.get_size_number(image)
         coordinates = np.array(
             [
                 ray_vertical,
                 ray_horizontal,
-                luminosity_from_top,
-                luminosity_from_bottom,
-                luminosity_from_left,
-                luminosity_from_right,
+                light_from_top,
+                light_from_bottom,
+                light_from_left,
+                light_from_right,
                 size_number,
             ]
         )
