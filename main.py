@@ -94,7 +94,7 @@ class KDT:
         reaches = np.sum(np.all(image == 0, axis=1))
         return np.float64(reaches / image.shape[1])
 
-    def light_from(self, image: npt.NDArray[np.float64], source: str = "top") -> np.float64:
+    def light_from(self, image: npt.NDArray[np.float64], source: str) -> np.float64:
         """Parse each column of the image, throw a ray from the source and see how many pixels
         are crossed by the ray.
 
