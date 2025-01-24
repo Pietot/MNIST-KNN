@@ -68,60 +68,49 @@ class KDT:
         )
         return coordinates
 
-    def raytracing_vertical(self, image: npt.NDArray[np.float64]) -> np.float64:
-        """Parse each column of the image and see if all value are 0.
-
-        Args:
-            image (npt.NDArray[np.float64]): The image to parse.
-
-        Returns:
-            np.float64: The percentage of rays that reach the bottom.
-        """
-        reaches = np.sum(np.all(image == 0, axis=0))
-        return np.float64(reaches / image.shape[1])
-
-    def raytracing_horizontal(self, image: npt.NDArray[np.float64]) -> np.float64:
-        """Parse each line of the image and see if all values are 0.
-
-        Args:
-            image (npt.NDArray[np.float64]): The image to parse.
-
-        Returns:
-            np.float64: The percentage of rays that reach the bottom.
-        """
-        reaches = np.sum(np.all(image == 0, axis=1))
-        return np.float64(reaches / image.shape[1])
-
-    def light_from(self, image: npt.NDArray[np.float64], source: str) -> np.float64:
-        """Parse each column of the image, throw a ray from the source and see how many pixels
-        are crossed by the ray.
-
-        Args:
-            image (npt.NDArray[np.float64]): The image to parse.
-
-        Returns:
-            np.float64: The percentage of pixels crossed by the ray.
-        """
-        axis = 0 if source in {"top", "bottom"} else 1
-        if source in {"bottom", "right"}:
-            image = np.flip(image, axis=axis)
-
-        zero_pixels = np.sum(image == 0)
-        hit_number = np.cumsum(image != 0, axis=axis) > 0
-        pixels_crossed = np.sum((image == 0) & ~hit_number)
-
-        return np.float64(pixels_crossed / zero_pixels)
-
-    def get_size_number(self, image: npt.NDArray[np.float64]) -> np.float64:
-        """Get the number of pixels that belong to the number.
+    def get_variation_shape(
+        self, image: npt.NDArray[np.float64], side: str
+    ) -> tuple[np.float64, np.float64]:
+        """Get the variation of the shape of the number from one side.
 
         Args:
             image (npt.NDArray[np.float64]): The image.
+            side (str): The side of the number ("left", "right", "top", "bottom").
 
         Returns:
-            np.float64: The percentage of pixels that belong to the number.
+            np.float64: A value representing the variation of the shape of the number.
         """
-        return np.float64(np.sum(image > 0) / image.size)
+        if side not in {"left", "right", "top", "bottom"}:
+            raise ValueError("Invalid side. Must be 'left', 'right', 'top', or 'bottom'.")
+
+        variation = 0
+        start = 0
+        end = 0
+        previous_position = None
+
+        if side in {"left", "right"}:
+            axis = 1
+            reverse = side == "right"
+        else:
+            axis = 0
+            reverse = side == "bottom"
+
+        for line in image.T if axis == 0 else image:
+            positions = np.where(line > 0)[0]
+            if reverse:
+                positions = positions[::-1]
+
+            if len(positions) > 0:
+                current_position = positions[0]
+                if previous_position is not None:
+                    variation += abs(current_position - previous_position)
+                if start is None:
+                    start = current_position
+                previous_position = current_position
+
+                end = current_position
+
+        return np.float64(variation), np.float64(end - start)
 
     def add(self, coordinates: npt.NDArray[np.float64]) -> None:
         """Add a point into the KDT.
