@@ -50,22 +50,20 @@ class KDT:
         Args:
             image (npt.NDArray[np.float64]): The image.
         """
-        ray_vertical = self.raytracing_vertical(image)
-        ray_horizontal = self.raytracing_horizontal(image)
-        light_from_top = self.light_from(image, "top")
-        light_from_bottom = self.light_from(image, "bottom")
-        light_from_left = self.light_from(image, "left")
-        light_from_right = self.light_from(image, "right")
-        size_number = self.get_size_number(image)
+        variation_shape_top, diff_start_end_top = self.get_variation_shape(image, "top")
+        variation_shape_bottom, diff_start_end_bottom = self.get_variation_shape(image, "bottom")
+        variation_shape_left, diff_start_end_left = self.get_variation_shape(image, "left")
+        variation_shape_right, diff_start_end_right = self.get_variation_shape(image, "right")
         coordinates = np.array(
             [
-                ray_vertical,
-                ray_horizontal,
-                light_from_top,
-                light_from_bottom,
-                light_from_left,
-                light_from_right,
-                size_number,
+                variation_shape_top,
+                diff_start_end_top,
+                variation_shape_bottom,
+                diff_start_end_bottom,
+                variation_shape_left,
+                diff_start_end_left,
+                variation_shape_right,
+                diff_start_end_right,
             ]
         )
         return coordinates
