@@ -204,12 +204,11 @@ def load_test_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
 
 
 if __name__ == "__main__":
-    with open(r"assets\class\kdt.pkl", "rb") as file:
-        kdt = pickle.load(file)
+    tree = KDT()
     test_images, test_labels = load_test_mnist()
     correct: int = 0
     for img, lab in zip(test_images, test_labels):
-        prediction = kdt.predict(img)
+        prediction: int = tree.predict(img)
         if prediction == lab:
             correct += 1
     print(f"Accuracy: {correct / len(test_images) * 100:.2f}%")
