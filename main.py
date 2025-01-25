@@ -50,19 +50,31 @@ class KDT:
         Args:
             image (npt.NDArray[np.float64]): The image.
         """
-        variation_shape_top, diff_start_end_top = self.get_variation_shape(image, "top")
-        variation_shape_bottom, diff_start_end_bottom = self.get_variation_shape(image, "bottom")
-        variation_shape_left, diff_start_end_left = self.get_variation_shape(image, "left")
-        variation_shape_right, diff_start_end_right = self.get_variation_shape(image, "right")
+        variation_shape_top_abs, variation_shape_top_rel, diff_start_end_top = (
+            self.get_variation_shape(image, "top")
+        )
+        variation_shape_bottom_abs, variation_shape_bottom_rel, diff_start_end_bottom = (
+            self.get_variation_shape(image, "bottom")
+        )
+        variation_shape_left_abs, variation_shape_left_rel, diff_start_end_left = (
+            self.get_variation_shape(image, "left")
+        )
+        variation_shape_right_abs, variation_shape_right_rel, diff_start_end_right = (
+            self.get_variation_shape(image, "right")
+        )
         coordinates = np.array(
             [
-                variation_shape_top,
+                variation_shape_top_abs,
+                variation_shape_top_rel,
                 diff_start_end_top,
-                variation_shape_bottom,
+                variation_shape_bottom_abs,
+                variation_shape_bottom_rel,
                 diff_start_end_bottom,
-                variation_shape_left,
+                variation_shape_left_abs,
+                variation_shape_left_rel,
                 diff_start_end_left,
-                variation_shape_right,
+                variation_shape_right_abs,
+                variation_shape_right_rel,
                 diff_start_end_right,
             ]
         )
