@@ -157,7 +157,8 @@ def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
             The images and the labels.
     """
     with open(r"assets\train-images-idx3-ubyte", "rb") as f:
-        f.read(4)  # Ignore magic field
+        # Ignore magic field
+        f.read(4)
         num_images = int.from_bytes(f.read(4), "big")
         num_rows = int.from_bytes(f.read(4), "big")
         num_cols = int.from_bytes(f.read(4), "big")
@@ -166,7 +167,8 @@ def load_train_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
         images = np.frombuffer(image_data, dtype=np.uint8).reshape((num_images, num_rows, num_cols))
 
     with open(r"assets\train-labels-idx1-ubyte", "rb") as f:
-        f.read(4)  # Ignore magic field
+        # Ignore magic field
+        f.read(4)
         num_labels = int.from_bytes(f.read(4), "big")
         assert num_labels == num_images, "Number of labels does not match number of images"
 
@@ -184,7 +186,8 @@ def load_test_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
             The images and the labels.
     """
     with open(r"assets\t10k-images-idx3-ubyte", "rb") as f:
-        f.read(4)  # Ignore magic field
+        # Ignore magic field
+        f.read(4)
         num_images = int.from_bytes(f.read(4), "big")
         num_rows = int.from_bytes(f.read(4), "big")
         num_cols = int.from_bytes(f.read(4), "big")
@@ -193,7 +196,8 @@ def load_test_mnist() -> tuple[npt.NDArray[np.uint8], npt.NDArray[np.uint8]]:
         images = np.frombuffer(image_data, dtype=np.uint8).reshape((num_images, num_rows, num_cols))
 
     with open(r"assets\t10k-labels-idx1-ubyte", "rb") as f:
-        f.read(4)  # Ignore magic field
+        # Ignore magic field
+        f.read(4)
         num_labels = int.from_bytes(f.read(4), "big")
         assert num_labels == num_images, "Number of labels does not match number of images"
 
