@@ -2,7 +2,6 @@
 
 from typing import Any, Generator, Union
 
-import pickle
 import numpy as np
 from scipy.spatial import cKDTree  # type: ignore
 
