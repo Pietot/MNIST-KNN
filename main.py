@@ -44,7 +44,7 @@ class KDT:
         self.kdtree = cKDTree(points)
 
     def get_coordinates(self, image: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
-        """Gets the 9 coordinates for all images.
+        """Gets the 12 coordinates for all images.
 
         Args:
             image (npt.NDArray[np.float64]): The image.
@@ -86,13 +86,13 @@ class KDT:
 
         Args:
             image (npt.NDArray[np.float64]): The image.
-            side (str): The side of the number ("left", "right", "top", "bottom").
+            side (str): The side of the number ("top", "bottom", "left", or "right").
 
         Returns:
             np.float64: A value representing the variation of the shape of the number.
         """
-        if side not in {"left", "right", "top", "bottom"}:
-            raise ValueError("Invalid side. Must be 'left', 'right', 'top', or 'bottom'.")
+        if side not in {"top", "bottom", "left", "right"}:
+            raise ValueError("Invalid side. Must be 'top', 'bottom', 'left', or 'right'.")
 
         variation_abs = 0
         variation_rel = 0
@@ -129,7 +129,7 @@ class KDT:
         """Add a point into the KDT.
 
         Args:
-            coordinates (npt.NDArray[np.float64]): The 9 dimensions coordinates of the point.
+            coordinates (npt.NDArray[np.float64]): The 12 dimensions coordinates of the point.
         """
         self.coordinates.append(coordinates)
 
