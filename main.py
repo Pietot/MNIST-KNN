@@ -49,31 +49,21 @@ class KDT:
         Args:
             image (npt.NDArray[np.float64]): The image.
         """
-        variation_shape_top_abs, variation_shape_top_rel, diff_start_end_top = (
-            self.get_variation_shape(image, "top")
+        variation_shape_top_abs, diff_start_end_top = self.get_variation_shape(image, "top")
+        variation_shape_bottom_abs, diff_start_end_bottom = self.get_variation_shape(
+            image, "bottom"
         )
-        variation_shape_bottom_abs, variation_shape_bottom_rel, diff_start_end_bottom = (
-            self.get_variation_shape(image, "bottom")
-        )
-        variation_shape_left_abs, variation_shape_left_rel, diff_start_end_left = (
-            self.get_variation_shape(image, "left")
-        )
-        variation_shape_right_abs, variation_shape_right_rel, diff_start_end_right = (
-            self.get_variation_shape(image, "right")
-        )
+        variation_shape_left_abs, diff_start_end_left = self.get_variation_shape(image, "left")
+        variation_shape_right_abs, diff_start_end_right = self.get_variation_shape(image, "right")
         coordinates = np.array(
             [
                 variation_shape_top_abs,
-                variation_shape_top_rel,
                 diff_start_end_top,
                 variation_shape_bottom_abs,
-                variation_shape_bottom_rel,
                 diff_start_end_bottom,
                 variation_shape_left_abs,
-                variation_shape_left_rel,
                 diff_start_end_left,
                 variation_shape_right_abs,
-                variation_shape_right_rel,
                 diff_start_end_right,
             ]
         )
@@ -81,7 +71,7 @@ class KDT:
 
     def get_variation_shape(
         self, image: npt.NDArray[np.float64], side: str
-    ) -> tuple[np.float64, np.float64, np.float64]:
+    ) -> tuple[np.float64, np.float64]:
         """Get the variation of the shape of the number from one side.
 
         Args:
@@ -89,13 +79,13 @@ class KDT:
             side (str): The side of the number ("top", "bottom", "left", or "right").
 
         Returns:
-            np.float64: A value representing the variation of the shape of the number.
+            tuple[np.float64, np.float64]:
+                The absolute variation and the difference between the start and end.
         """
         if side not in {"top", "bottom", "left", "right"}:
             raise ValueError("Invalid side. Must be 'top', 'bottom', 'left', or 'right'.")
 
         variation_abs = 0
-        variation_rel = 0
         start = 0
         end = 0
         previous_position = None
@@ -116,14 +106,13 @@ class KDT:
                 current_position = positions[0]
                 if previous_position is not None:
                     variation_abs += abs(current_position - previous_position)
-                    variation_rel += current_position - previous_position
-                if start is None:
+                if start == 0:
                     start = current_position
                 previous_position = current_position
 
                 end = current_position
 
-        return np.float64(variation_abs), np.float64(variation_rel), np.float64(end - start)
+        return np.float64(variation_abs), np.float64(end - start)
 
     def add(self, coordinates: npt.NDArray[np.float64]) -> None:
         """Add a point into the KDT.
