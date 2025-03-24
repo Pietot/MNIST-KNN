@@ -64,8 +64,7 @@ The accuracy of the KNN algorithm is calculated by dividing the number of correc
 |  K  |                         Method                         | Accuracy |
 | :-: | :----------------------------------------------------: | :------: |
 |  5  |                    Light and shadow                    |  ~ 65%   |
-|  5  |      Variation absolute & difference start - end       |  ~ 85%   |
-|  5  | Variation absolute + relative & difference start - end |  ~ 87%   |
+|  5  |      Variation absolute & difference start - end       |  ~ 84%   |
 
 ## 4 - Credits
 
