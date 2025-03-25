@@ -49,11 +49,9 @@ The question now is how to convert an image of the MNIST dataset into a point in
 
 At the beginning, I've tried to calcule the percentage of pixels that was crossed by the ray of light and the percetage of pixels hidden by the digits in each direction. The accuracy was fair enough (65%) but I wanted at least 80% of accuracy.
 
-So I completely changed my approach. Instead, I've tried to get the variation relative and absolute of each side of the digit. Meanning that for each side, I throw a ray of light and when it encounters a pixel of the digit, it records the position of that pixel. By doing this sequentially for each "ray" along the specified side (e.g., top, bottom, left, or right), I can track how the position of the first detected pixel changes.
+So I completely changed my approach. Instead, I've tried to get the variation absolute of each side of the digit. Meanning that for each side, I throw a ray of light and when it encounters a pixel of the digit, it records the position of that pixel. By doing this sequentially for each "ray" along the specified side (e.g., top, bottom, left, or right), I can track how the position of the first detected pixel changes.
 
 The absolute variation calculates the sum of the absolute differences between consecutive detected positions, providing a measure of how irregular the edge of the digit is along that side.
-
-The relative variation keeps track of the signed differences between consecutive positions. This can help distinguish whether the shape along the side tends to grow outward or inward as we progress along the rays.
 
 Finally, I also calculate the difference between the starting and ending position of the edge (end - start), which gives a sense of the overall "tilt" or "shift" of the edge.
 
