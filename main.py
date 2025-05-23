@@ -1,4 +1,4 @@
-"""Pylight recognize handwritten numbers using rays of light and the KNN algorithm."""
+"""This AI model recognize handwritten numbers using rays of light and the KNN algorithm."""
 
 from typing import Any, Generator, Union
 
