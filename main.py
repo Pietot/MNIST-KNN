@@ -44,7 +44,7 @@ class KDT:
         self.kdtree = cKDTree(points)
 
     def get_coordinates(self, image: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
-        """Gets the 12 coordinates for all images.
+        """Gets the 8 coordinates for all images.
 
         Args:
             image (npt.NDArray[np.float64]): The image.
@@ -118,7 +118,7 @@ class KDT:
         """Add a point into the KDT.
 
         Args:
-            coordinates (npt.NDArray[np.float64]): The 12 dimensions coordinates of the point.
+            coordinates (npt.NDArray[np.float64]): The 8 dimensions coordinates of the point.
         """
         self.coordinates.append(coordinates)
 
